@@ -28,7 +28,7 @@ module TbHeavyControl
     end
 
     initializer 'tb_heavy_control.concepts_loader', after: :load_config_initializers do |app|
-      ActionDispatch::Reloader.to_prepare do
+      ActiveSupport::Reloader.to_prepare do
         TbHeavyControl::Railtie.concepts_loader(app)
       end
     end

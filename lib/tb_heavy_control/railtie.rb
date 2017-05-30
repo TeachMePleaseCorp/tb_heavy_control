@@ -14,7 +14,10 @@ module TbHeavyControl
 
     # this initializer is a copy from trailblazer-rails gem
     initializer 'tb_heavy_control.trailblazer-rails_stuff', before: :load_config_initializers do
-      require 'trailblazer/autoloading'
+      begin
+        require 'trailblazer/autoloading'
+      rescue LoadError # rubocop:disable Lint/HandleExceptions
+      end
 
       require 'trailblazer/operation/model'
       require 'trailblazer/operation/model/active_model'
@@ -27,8 +30,10 @@ module TbHeavyControl
       end
     end
 
+    RELOADER_NS = ::Rails::VERSION::MAJOR >= 5 ? ActiveSupport : ActionDispatch
+
     initializer 'tb_heavy_control.concepts_loader', after: :load_config_initializers do |app|
-      ActiveSupport::Reloader.to_prepare do
+      RELOADER_NS::Reloader.to_prepare do
         TbHeavyControl::Railtie.concepts_loader(app)
       end
     end
